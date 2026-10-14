@@ -1,0 +1,1734 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Australia's Art Heritage | FIT3179</title>
+
+<!-- Vega-Lite -->
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-dsv@3"></script>
+
+<style>
+:root {
+  --bg: #f7f5f0;
+  --paper: #fffefa;
+  --ink: #252d2a;
+  --muted: #69736e;
+  --terracotta: #b7654e;
+  --sage: #718879;
+  --line: #e3e0d8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.55;
+}
+
+h1, h2, h3, p {
+  margin-top: 0;
+}
+
+h1, h2, h3 {
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.035em;
+}
+
+/* NAVIGATION */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255,254,250,.97);
+  border-bottom: 1px solid var(--line);
+}
+
+.navbar {
+  max-width: 1220px;
+  margin: auto;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.navlinks {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.navlinks a {
+  color: #56635c;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.navlinks a:hover {
+  color: var(--terracotta);
+}
+
+/* HERO */
+
+.hero {
+  padding: 70px 7% 48px;
+  min-height: 430px;
+  background:
+    radial-gradient(
+      ellipse at 88% 25%,
+      rgba(183,101,78,.22),
+      transparent 38%
+    ),
+    linear-gradient(
+      115deg,
+      #f0e9e0,
+      #f8f5ee 65%,
+      #e5e9df
+    );
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 285px;
+  height: 445px;
+  top: -100px;
+  right: 7%;
+  border-radius: 48% 52% 40% 60%;
+  background: rgba(183,101,78,.55);
+  transform: rotate(-25deg);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 345px;
+  height: 345px;
+  right: -100px;
+  bottom: -155px;
+  border-radius: 54% 46% 63% 37%;
+  background: rgba(81,109,100,.75);
+}
+
+.hero-inner {
+  max-width: 1180px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.kicker {
+  color: var(--terracotta);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(45px, 6.5vw, 80px);
+  line-height: 1.04;
+  font-weight: 800;
+  margin: 16px 0;
+  max-width: 700px;
+}
+
+.subtitle {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.hero-description {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #58645e;
+  max-width: 570px;
+}
+
+.jump {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 11px 19px;
+  background: var(--ink);
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.jump:hover {
+  background: var(--terracotta);
+}
+
+/* SUMMARY */
+
+.summary-stats {
+  margin-top: 33px;
+  padding-top: 18px;
+  border-top: 1px solid #d8cfc5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  max-width: 760px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.stat span {
+  color: #68746e;
+  font-size: 11px;
+}
+
+/* MAIN */
+
+.container {
+  width: min(1220px, 93%);
+  margin: auto;
+}
+
+.chapter {
+  padding: 45px 0 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chapter small {
+  display: block;
+  color: var(--terracotta);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.chapter h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 7px;
+}
+
+.chapter p {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 720px;
+}
+
+/* STORY */
+
+.story {
+  display: grid;
+  grid-template-columns:
+    minmax(210px, .7fr)
+    minmax(0, 1.8fr);
+  gap: 30px;
+  padding: 29px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+
+.story-text {
+  padding: 8px 0;
+}
+
+.number {
+  color: var(--terracotta);
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  border-bottom: 2px solid currentColor;
+  margin-bottom: 22px;
+  padding-bottom: 8px;
+}
+
+.story:nth-of-type(even) .number {
+  color: var(--sage);
+}
+
+.story h2 {
+  font-size: clamp(21px, 2.3vw, 28px);
+  line-height: 1.2;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.description {
+  color: #5d6862;
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+/* ANNOTATION */
+
+.annotation {
+  margin-top: 21px;
+  border-left: 2px solid #c58971;
+  padding-left: 13px;
+}
+
+.annotation strong {
+  color: var(--terracotta);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.annotation p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 6px 0 0;
+}
+
+/* CHART */
+
+.chart-panel {
+  background: var(--paper);
+  border: 1px solid #eae7e0;
+  border-radius: 4px;
+  padding: 22px 22px 16px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.chart-panel h3 {
+  font-size: 16px;
+  font-weight: 800;
+  border-bottom: 1px solid #efede7;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+.chart {
+  width: 100%;
+  min-width: 0;
+  min-height: 260px;
+}
+
+.map-chart {
+  min-height: 370px;
+}
+
+.vega-embed {
+  max-width: 100%;
+}
+
+.chart svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.source {
+  margin-top: 13px;
+  padding-top: 10px;
+  border-top: 1px solid #f1eee9;
+  color: #89928c;
+  font-size: 10px;
+}
+
+.error {
+  padding: 15px;
+  background: #fae6df;
+  color: #863d31;
+  font-size: 12px;
+}
+
+/* FOOTER */
+
+footer {
+  margin-top: 45px;
+  background: #263934;
+  color: white;
+  padding: 50px 7%;
+}
+
+.footer-inner {
+  max-width: 1120px;
+  margin: auto;
+}
+
+footer h2 {
+  font-size: 25px;
+}
+
+footer p {
+  font-size: 12px;
+  color: #d4ded7;
+  line-height: 1.85;
+  max-width: 850px;
+}
+
+footer a {
+  color: #f0c4af;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:850px) {
+  .story {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .hero {
+    padding: 48px 6%;
+  }
+
+  .hero::before,
+  .hero::after {
+    opacity: .15;
+  }
+
+  .chart-panel {
+    padding: 16px 12px;
+  }
+
+  .chapter h2 {
+    font-size: 27px;
+  }
+}
+
+@media(max-width:520px) {
+  .navbar {
+    padding: 14px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    font-size: 15px;
+  }
+
+  .navlinks {
+    gap: 13px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="navbar">
+    <div class="brand">Australia's Art Heritage</div>
+
+    <div class="navlinks">
+      <a href="#collections">Collections</a>
+      <a href="#artists">Artists</a>
+      <a href="#maps">Maps</a>
+      <a href="#sources">Sources</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="kicker">
+      FIT3179 / Australian Visual Arts / Data Story
+    </div>
+
+    <h1>Australia's<br>Art Heritage</h1>
+
+    <div class="subtitle">
+      From Gallery Collections to Public Spaces
+    </div>
+
+    <p class="hero-description">
+      Explore how artwork categories, collecting
+      patterns and public art locations contribute
+      to Australia's visual arts heritage, using
+      data from QAGOMA and the City of Melbourne.
+    </p>
+
+    <a class="jump" href="#collections">
+      Explore the Collection ↓
+    </a>
+
+    <div class="summary-stats">
+      <div class="stat">
+        <strong>20,682</strong>
+        <span>QAGOMA artwork records</span>
+      </div>
+
+      <div class="stat">
+        <strong>6,331</strong>
+        <span>Artist and organisation records</span>
+      </div>
+
+      <div class="stat">
+        <strong>261</strong>
+        <span>Melbourne public art records</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="container" id="main"></main>
+
+<footer id="sources">
+  <div class="footer-inner">
+    <h2>Sources & Methodology</h2>
+
+    <p>
+      Sources: Queensland Art Gallery | Gallery of
+      Modern Art, Collection Artworks and Artists
+      and Organisations (December 2024); City of
+      Melbourne, Public Artworks, Fountains and
+      Monuments; and City of Melbourne Municipal
+      Boundary.
+    </p>
+
+    <p>
+      Only exact four-digit creation years are used
+      in creation-date visualisations. Records with
+      missing or uncertain years are omitted from
+      these charts. Missing and unknown creators
+      are excluded from creator rankings.
+    </p>
+
+    <p>
+      The proportional symbol and geographic bin
+      maps aggregate public artwork locations into
+      spatial cells. Counts in QAGOMA and Melbourne
+      represent different collections and should
+      not be compared as equivalent national totals.
+    </p>
+
+    <p>
+      <a href="https://www.data.qld.gov.au/dataset/qagoma-collection">
+        QAGOMA Artworks
+      </a> |
+      <a href="https://www.data.qld.gov.au/dataset/qagoma-artists-and-organisations">
+        QAGOMA Artists
+      </a> |
+      <a href="https://data.melbourne.vic.gov.au/explore/dataset/public-artworks-fountains-and-monuments/">
+        Melbourne Public Art
+      </a> |
+      <a href="https://data.melbourne.vic.gov.au/explore/dataset/municipal-boundary/">
+        Municipal Boundary
+      </a>
+    </p>
+
+    <p>
+      FIT3179 Data Visualisation 2 · Vega-Lite
+    </p>
+  </div>
+</footer>
+
+<script>
+// ========================================
+// 1. FILES AND COLOURS
+// ========================================
+
+const FILES = {
+  art:"qagoma-collection-artworks-december-2024.csv",
+  people:"qagoma-artists-and-organisations-december-2024.csv",
+  mel:"public-artworks-fountains-and-monuments.csv",
+  boundary:"melbourne-boundary.geojson"
+};
+
+const COLORS = [
+  "#b7654e",
+  "#d99575",
+  "#718879",
+  "#8fa9a4",
+  "#d9b76d",
+  "#927c91",
+  "#5d798c",
+  "#c1a994"
+];
+
+// ========================================
+// 2. STORY SECTIONS
+// ========================================
+
+const STORIES = [
+  {
+    title:"What kinds of artworks are collected?",
+    description:"Compare the most common artwork categories across QAGOMA departments.",
+    chart:"Artwork Categories by Department",
+    note:"Darker cells represent more artworks in a category and department."
+  },
+  {
+    title:"How has collecting changed over time?",
+    description:"Explore recorded annual acquisitions across QAGOMA departments.",
+    chart:"Annual Artwork Acquisitions",
+    note:"Acquisition year refers to when an artwork entered the collection, not its creation year."
+  },
+  {
+    title:"Which art forms became prominent?",
+    description:"Follow category rankings across different creation decades.",
+    chart:"Changing Artwork Category Rankings",
+    note:"Rank one identifies the most frequently recorded category within a decade."
+  },
+  {
+    title:"How do departments differ?",
+    description:"Compare the relative proportions of major artwork categories.",
+    chart:"Artwork Composition by Department",
+    note:"Each bar is normalised to 100% using the eight most common categories."
+  },
+  {
+    title:"Where are artists associated with?",
+    description:"Explore principal countries listed in QAGOMA artist and organisation records.",
+    chart:"Principal Countries of Artists and Organisations",
+    note:"Principal country does not necessarily identify an artist's birthplace."
+  },
+  {
+    title:"Who is represented most frequently?",
+    description:"Identify frequently recorded creators within the collection.",
+    chart:"Most Frequently Recorded Creators",
+    note:"Unknown and unidentified creator records are excluded."
+  },
+  {
+    title:"When were different types of art created?",
+    description:"Compare artwork categories across creation decades.",
+    chart:"Artwork Categories Across Decades",
+    note:"Circle size represents the number of artworks. Only exact years are included."
+  },
+  {
+    title:"Where is Melbourne's public art?",
+    description:"Explore individual artworks, monuments and fountains around Melbourne.",
+    chart:"Map 1 — Dot Map",
+    note:"Each point represents an individual public artwork record."
+  },
+  {
+    title:"Where are more artworks found?",
+    description:"Compare artwork counts within geographic grid cells.",
+    chart:"Map 2 — Proportional Symbol Map",
+    note:"Larger circles represent cells containing more public artworks."
+  },
+  {
+    title:"Where is public art concentrated?",
+    description:"Explore the geographic concentration of public artwork records.",
+    chart:"Map 3 — Geographic Bin Map",
+    note:"Darker square bins represent more artworks within each cell."
+  }
+];
+
+// ========================================
+// 3. GENERATE PAGE
+// ========================================
+
+const main=document.getElementById("main");
+
+function addChapter(id,label,title,description) {
+  const section=document.createElement("div");
+  section.className="chapter";
+  section.id=id;
+
+  section.innerHTML=`
+    <small>${label}</small>
+    <h2>${title}</h2>
+    <p>${description}</p>
+  `;
+
+  main.appendChild(section);
+}
+
+STORIES.forEach((s,i)=>{
+
+  if(i===0) {
+    addChapter(
+      "collections",
+      "CHAPTER 01 / COLLECTIONS",
+      "Inside the Collection",
+      "Discover the diversity of artworks, artistic periods and departments within QAGOMA."
+    );
+  }
+
+  if(i===4) {
+    addChapter(
+      "artists",
+      "CHAPTER 02 / ARTISTS",
+      "The People Behind the Art",
+      "Explore the artists and organisations represented in the collection."
+    );
+  }
+
+  if(i===7) {
+    addChapter(
+      "maps",
+      "CHAPTER 03 / PUBLIC ART",
+      "Art Beyond the Gallery",
+      "Discover the locations and concentrations of public artworks in Melbourne."
+    );
+  }
+
+  const el=document.createElement("section");
+  el.className="story";
+
+  el.innerHTML=`
+    <div class="story-text">
+
+      <div class="number">
+        ${String(i+1).padStart(2,"0")}
+      </div>
+
+      <h2>${s.title}</h2>
+
+      <p class="description">
+        ${s.description}
+      </p>
+
+      <div class="annotation">
+        <strong>HOW TO READ</strong>
+        <p>${s.note}</p>
+      </div>
+
+    </div>
+
+    <div class="chart-panel">
+
+      <h3>${s.chart}</h3>
+
+      <div
+        id="chart${i+1}"
+        class="chart ${i>=7?"map-chart":""}">
+        Loading...
+      </div>
+
+      <div class="source">
+        Source: ${i<7
+          ?"QAGOMA, December 2024"
+          :"City of Melbourne"}
+      </div>
+
+    </div>
+  `;
+
+  main.appendChild(el);
+});
+
+// ========================================
+// 4. DATA HELPERS
+// ========================================
+
+function groupCount(rows,fields) {
+  const map=new Map();
+
+  rows.forEach(row=>{
+    const values=fields.map(f=>row[f]??"");
+    const key=JSON.stringify(values);
+
+    if(!map.has(key)) {
+      const item={count:0};
+
+      fields.forEach((f,i)=>{
+        item[f]=values[i];
+      });
+
+      map.set(key,item);
+    }
+
+    map.get(key).count++;
+  });
+
+  return [...map.values()];
+}
+
+function exactYear(value) {
+  const s=String(value??"").trim();
+
+  if(!/^\d{4}$/.test(s)) return null;
+
+  const year=Number(s);
+
+  return year>=1500 && year<=2024
+    ?year:null;
+}
+
+function acquiredYear(value) {
+  const match=/^(\d{4})-\d{2}-\d{2}$/.exec(
+    String(value??"").trim()
+  );
+
+  if(!match) return null;
+
+  const year=Number(match[1]);
+
+  return year>=1850 && year<=2024
+    ?year:null;
+}
+
+function base(id,height=280) {
+  const container=document.getElementById(
+    "chart"+id
+  );
+
+  const width=Math.max(
+    270,
+    Math.floor(container.clientWidth)-30
+  );
+
+  return {
+    "$schema":"https://vega.github.io/schema/vega-lite/v5.json",
+    width,
+    height,
+    autosize:{
+      type:"fit",
+      contains:"padding"
+    },
+    background:null,
+    padding:5,
+    config:{
+      font:"Arial",
+      view:{stroke:null},
+      axis:{
+        labelFont:"Arial",
+        titleFont:"Arial",
+        labelFontSize:10,
+        titleFontSize:11,
+        labelColor:"#4b5a55",
+        titleColor:"#252d2a",
+        gridColor:"#ebe8e2",
+        labelLimit:125
+      },
+      legend:{
+        labelFont:"Arial",
+        titleFont:"Arial",
+        labelFontSize:10,
+        titleFontSize:11,
+        labelColor:"#4b5a55",
+        orient:"bottom",
+        direction:"horizontal"
+      }
+    }
+  };
+}
+
+async function render(id,spec) {
+  try {
+    await vegaEmbed(
+      "#chart"+id,
+      spec,
+      {
+        actions:false,
+        renderer:"svg"
+      }
+    );
+  } catch(error) {
+    console.error("Chart "+id,error);
+
+    document.getElementById(
+      "chart"+id
+    ).innerHTML=`
+      <div class="error">
+        ${error.message}
+      </div>
+    `;
+  }
+}
+
+async function loadCSV(filename) {
+  const response=await fetch(filename);
+
+  if(!response.ok) {
+    throw new Error(
+      "Cannot load "+filename
+    );
+  }
+
+  return d3.csvParse(
+    await response.text()
+  );
+}
+
+// ========================================
+// 5. MAP HELPERS
+// ========================================
+
+function projection() {
+  return {
+    type:"mercator",
+    center:[144.96,-37.814],
+    scale:145000
+  };
+}
+
+function mapBase(id) {
+  return {
+    ...base(id,360),
+    projection:projection()
+  };
+}
+
+function boundaryLayer(features) {
+  return {
+    data:{values:features},
+    mark:{
+      type:"geoshape",
+      fill:"#edf0ea",
+      stroke:"#9bad9e",
+      strokeWidth:1.3
+    }
+  };
+}
+
+// Geographic grid in approximate metres
+
+const EARTH=6371008.8;
+const RAD=Math.PI/180;
+
+const ORIGIN_LON=144.96;
+const ORIGIN_LAT=-37.814;
+
+const COSLAT=Math.cos(
+  ORIGIN_LAT*RAD
+);
+
+function toMetres(lon,lat) {
+  return {
+    x:(lon-ORIGIN_LON)*RAD*EARTH*COSLAT,
+    y:(lat-ORIGIN_LAT)*RAD*EARTH
+  };
+}
+
+function toDegrees(x,y) {
+  return [
+    ORIGIN_LON+x/(EARTH*COSLAT*RAD),
+    ORIGIN_LAT+y/(EARTH*RAD)
+  ];
+}
+
+function geographicCells(locations,size) {
+  const cells=new Map();
+
+  locations.forEach(loc=>{
+    const point=toMetres(
+      loc.lon,loc.lat
+    );
+
+    const gx=Math.floor(point.x/size);
+    const gy=Math.floor(point.y/size);
+
+    const key=gx+","+gy;
+
+    if(!cells.has(key)) {
+      cells.set(key,{gx,gy,count:0});
+    }
+
+    cells.get(key).count++;
+  });
+
+  return [...cells.values()].map(cell=>{
+    const x0=cell.gx*size;
+    const y0=cell.gy*size;
+    const x1=x0+size;
+    const y1=y0+size;
+
+    const center=toDegrees(
+      (x0+x1)/2,
+      (y0+y1)/2
+    );
+
+    const polygon=[
+      toDegrees(x0,y0),
+      toDegrees(x1,y0),
+      toDegrees(x1,y1),
+      toDegrees(x0,y1),
+      toDegrees(x0,y0)
+    ];
+
+    return {
+      lon:center[0],
+      lat:center[1],
+      count:cell.count,
+      feature:{
+        type:"Feature",
+        properties:{
+          count:cell.count
+        },
+        geometry:{
+          type:"Polygon",
+          coordinates:[polygon]
+        }
+      }
+    };
+  });
+}
+
+// ========================================
+// 6. LOAD DATA
+// ========================================
+
+async function initialise() {
+try {
+
+const [artRaw,people,melbourne]=
+  await Promise.all([
+    loadCSV(FILES.art),
+    loadCSV(FILES.people),
+    loadCSV(FILES.mel)
+  ]);
+
+// Load boundary separately, so missing
+// boundary data does not stop all charts.
+
+let boundaryFeatures=[];
+
+try {
+  const response=await fetch(FILES.boundary);
+
+  if(response.ok) {
+    const geo=await response.json();
+
+    if(geo.type==="FeatureCollection") {
+      boundaryFeatures=geo.features;
+    } else if(geo.type==="Feature") {
+      boundaryFeatures=[geo];
+    }
+  }
+} catch(error) {
+  console.warn(
+    "Boundary unavailable:",error
+  );
+}
+
+const art=artRaw.map(d=>{
+  const year=exactYear(d.DateCreated);
+
+  return {
+    department:d.Department||"Unspecified",
+    category:d.PhysicalCategory||"Unspecified",
+    creator:d.Person||"",
+    acquired:acquiredYear(d.AcquiredDate),
+    year,
+    decade:year===null
+      ?null
+      :Math.floor(year/10)*10
+  };
+});
+
+const topCategories=groupCount(
+  art,["category"]
+)
+.sort((a,b)=>b.count-a.count)
+.slice(0,8)
+.map(d=>d.category);
+
+// ========================================
+// CHART 1 — HEATMAP
+// ========================================
+
+const heat=groupCount(
+  art.filter(d=>
+    topCategories.includes(d.category)
+  ),
+  ["department","category"]
+);
+
+await render(1,{
+  ...base(1,305),
+  data:{values:heat},
+  mark:"rect",
+  encoding:{
+    x:{
+      field:"category",
+      type:"nominal",
+      sort:topCategories,
+      title:null,
+      axis:{
+        labelAngle:-35,
+        labelLimit:95
+      }
+    },
+    y:{
+      field:"department",
+      type:"nominal",
+      title:null,
+      axis:{labelLimit:145}
+    },
+    color:{
+      field:"count",
+      type:"quantitative",
+      title:"Artworks",
+      scale:{scheme:"orangered"}
+    },
+    tooltip:[
+      {field:"department"},
+      {field:"category"},
+      {field:"count",format:","}
+    ]
+  }
+});
+
+// ========================================
+// CHART 2 — STACKED AREA
+// ========================================
+
+const acquisitions=groupCount(
+  art.filter(d=>
+    d.acquired!==null &&
+    d.acquired>=1950
+  ),
+  ["acquired","department"]
+);
+
+await render(2,{
+  ...base(2,270),
+  data:{values:acquisitions},
+  mark:{
+    type:"area",
+    opacity:.85
+  },
+  encoding:{
+    x:{
+      field:"acquired",
+      type:"quantitative",
+      title:"Acquisition Year",
+      scale:{
+        zero:false,
+        domain:[1950,2024]
+      },
+      axis:{format:"d"}
+    },
+    y:{
+      field:"count",
+      type:"quantitative",
+      stack:"zero",
+      title:"Annual Artworks Acquired"
+    },
+    color:{
+      field:"department",
+      type:"nominal",
+      scale:{range:COLORS},
+      legend:{
+        orient:"bottom",
+        columns:3
+      }
+    },
+    tooltip:[
+      {field:"acquired",title:"Year"},
+      {field:"department"},
+      {field:"count",title:"Artworks"}
+    ]
+  }
+});
+
+// ========================================
+// CHART 3 — BUMP CHART
+// ========================================
+
+const selected=topCategories.slice(0,6);
+
+const decadeData=groupCount(
+  art.filter(d=>
+    d.decade!==null &&
+    d.decade>=1850 &&
+    selected.includes(d.category)
+  ),
+  ["decade","category"]
+);
+
+const decades=[
+  ...new Set(
+    decadeData.map(d=>d.decade)
+  )
+].sort((a,b)=>a-b);
+
+const ranks=[];
+
+decades.forEach(decade=>{
+  decadeData
+    .filter(d=>d.decade===decade)
+    .sort((a,b)=>b.count-a.count)
+    .forEach((d,i)=>{
+      ranks.push({
+        ...d,
+        rank:i+1
+      });
+    });
+});
+
+await render(3,{
+  ...base(3,265),
+  data:{values:ranks},
+  mark:{
+    type:"line",
+    strokeWidth:2.3,
+    point:{
+      filled:true,
+      size:37
+    }
+  },
+  encoding:{
+    x:{
+      field:"decade",
+      type:"quantitative",
+      title:"Creation Decade",
+      scale:{
+        zero:false,
+        domain:[1850,2020]
+      },
+      axis:{format:"d"}
+    },
+    y:{
+      field:"rank",
+      type:"quantitative",
+      title:"Rank",
+      scale:{
+        reverse:true,
+        domain:[1,6]
+      },
+      axis:{tickMinStep:1}
+    },
+    color:{
+      field:"category",
+      type:"nominal",
+      scale:{range:COLORS},
+      legend:{
+        orient:"bottom",
+        columns:3
+      }
+    },
+    detail:{field:"category"},
+    tooltip:[
+      {field:"category"},
+      {field:"decade"},
+      {field:"rank"},
+      {field:"count"}
+    ]
+  }
+});
+
+// ========================================
+// CHART 4 — NORMALISED STACKED BAR
+// ========================================
+
+const composition=groupCount(
+  art.filter(d=>
+    topCategories.includes(d.category)
+  ),
+  ["department","category"]
+);
+
+await render(4,{
+  ...base(4,305),
+  data:{values:composition},
+  mark:"bar",
+  encoding:{
+    y:{
+      field:"department",
+      type:"nominal",
+      title:null,
+      axis:{labelLimit:145}
+    },
+    x:{
+      field:"count",
+      type:"quantitative",
+      stack:"normalize",
+      title:"Share of Selected Categories",
+      axis:{format:".0%"}
+    },
+    color:{
+      field:"category",
+      type:"nominal",
+      scale:{range:COLORS},
+      legend:{
+        orient:"bottom",
+        columns:4
+      }
+    },
+    tooltip:[
+      {field:"department"},
+      {field:"category"},
+      {field:"count"}
+    ]
+  }
+});
+
+// ========================================
+// CHART 5 — COUNTRIES
+// ========================================
+
+const countries=groupCount(
+  people.filter(d=>
+    d["Principal country"] &&
+    d["Principal country"].trim()
+  ),
+  ["Principal country"]
+)
+.sort((a,b)=>b.count-a.count)
+.slice(0,10)
+.map(d=>({
+  country:d["Principal country"],
+  count:d.count
+}));
+
+await render(5,{
+  ...base(5,290),
+  data:{values:countries},
+  mark:{
+    type:"bar",
+    cornerRadiusEnd:2
+  },
+  encoding:{
+    x:{
+      field:"count",
+      type:"quantitative",
+      title:"Records",
+      scale:{zero:true}
+    },
+    y:{
+      field:"country",
+      type:"nominal",
+      sort:"-x",
+      title:null
+    },
+    color:{value:"#718879"},
+    tooltip:[
+      {field:"country"},
+      {field:"count",format:","}
+    ]
+  }
+});
+
+// ========================================
+// CHART 6 — CREATOR RANKING
+// ========================================
+
+const creators=groupCount(
+  art.filter(d=>{
+    const creator=d.creator.trim();
+
+    return creator &&
+      !/^UNKNOWN\b/i.test(creator) &&
+      !/^UNIDENTIFIED\b/i.test(creator) &&
+      !/^ANONYMOUS\b/i.test(creator);
+  }),
+  ["creator"]
+)
+.sort((a,b)=>b.count-a.count)
+.slice(0,10)
+.map(d=>({
+  creator:d.creator,
+  count:d.count
+}));
+
+await render(6,{
+  ...base(6,290),
+  data:{values:creators},
+  mark:{
+    type:"bar",
+    cornerRadiusEnd:2
+  },
+  encoding:{
+    x:{
+      field:"count",
+      type:"quantitative",
+      title:"Artwork Records",
+      scale:{zero:true}
+    },
+    y:{
+      field:"creator",
+      type:"nominal",
+      sort:"-x",
+      title:null,
+      axis:{labelLimit:150}
+    },
+    color:{value:"#b7654e"},
+    tooltip:[
+      {field:"creator"},
+      {field:"count",format:","}
+    ]
+  }
+});
+
+// ========================================
+// CHART 7 — BUBBLE CHART
+// ========================================
+
+const bubbles=groupCount(
+  art.filter(d=>
+    d.decade!==null &&
+    d.decade>=1850 &&
+    topCategories.includes(d.category)
+  ),
+  ["decade","category"]
+);
+
+await render(7,{
+  ...base(7,280),
+  data:{values:bubbles},
+  mark:{
+    type:"circle",
+    opacity:.7,
+    stroke:"#ffffff",
+    strokeWidth:.6
+  },
+  encoding:{
+    x:{
+      field:"decade",
+      type:"quantitative",
+      title:"Creation Decade",
+      scale:{
+        zero:false,
+        domain:[1850,2025]
+      },
+      axis:{format:"d"}
+    },
+    y:{
+      field:"category",
+      type:"nominal",
+      sort:topCategories,
+      title:null,
+      axis:{labelLimit:120}
+    },
+    size:{
+      field:"count",
+      type:"quantitative",
+      title:"Artworks",
+      scale:{range:[15,650]}
+    },
+    color:{
+      field:"category",
+      type:"nominal",
+      scale:{range:COLORS},
+      legend:null
+    },
+    tooltip:[
+      {field:"decade"},
+      {field:"category"},
+      {field:"count"}
+    ]
+  }
+});
+
+// ========================================
+// GEOGRAPHIC DATA
+// ========================================
+
+const locations=melbourne.map(d=>{
+  const coords=String(
+    d.co_ordinates||""
+  ).split(",").map(Number);
+
+  return {
+    lat:coords[0],
+    lon:coords[1],
+    name:d.name||"Unnamed Artwork",
+    type:d.asset_type||"Unknown"
+  };
+}).filter(d=>
+  Number.isFinite(d.lat) &&
+  Number.isFinite(d.lon) &&
+  d.lat>-38.2 &&
+  d.lat< -37.5 &&
+  d.lon>144.5 &&
+  d.lon<145.3
+);
+
+// Use the same projection for all maps.
+
+function projection() {
+  return {
+    type:"mercator",
+    center:[144.96,-37.814],
+    scale:145000
+  };
+}
+
+function mapBase(id) {
+  return {
+    ...base(id,360),
+    projection:projection()
+  };
+}
+
+function mapBoundary() {
+  return {
+    data:{values:boundaryFeatures},
+    mark:{
+      type:"geoshape",
+      fill:"#edf0ea",
+      stroke:"#9bad9e",
+      strokeWidth:1.2
+    }
+  };
+}
+
+// ========================================
+// MAP 1 — DOT MAP
+// ========================================
+
+await render(8,{
+  ...mapBase(8),
+  layer:[
+    mapBoundary(),
+    {
+      data:{values:locations},
+      mark:{
+        type:"circle",
+        size:65,
+        opacity:.85,
+        stroke:"#ffffff",
+        strokeWidth:.7
+      },
+      encoding:{
+        longitude:{
+          field:"lon",
+          type:"quantitative"
+        },
+        latitude:{
+          field:"lat",
+          type:"quantitative"
+        },
+        color:{
+          field:"type",
+          type:"nominal",
+          title:"Asset Type",
+          scale:{
+            domain:[
+              "Art",
+              "Monument",
+              "Fountain"
+            ],
+            range:[
+              "#b7654e",
+              "#718879",
+              "#d9b76d"
+            ]
+          }
+        },
+        tooltip:[
+          {field:"name",title:"Artwork"},
+          {field:"type",title:"Type"}
+        ]
+      }
+    }
+  ]
+});
+
+// ========================================
+// SPATIAL AGGREGATION
+// ========================================
+
+const EARTH=6371008.8;
+const RAD=Math.PI/180;
+
+const ORIGIN_LON=144.96;
+const ORIGIN_LAT=-37.814;
+
+const COSLAT=Math.cos(
+  ORIGIN_LAT*RAD
+);
+
+function toMetres(lon,lat) {
+  return {
+    x:(lon-ORIGIN_LON)*RAD*EARTH*COSLAT,
+    y:(lat-ORIGIN_LAT)*RAD*EARTH
+  };
+}
+
+function toDegrees(x,y) {
+  return [
+    ORIGIN_LON+x/(EARTH*COSLAT*RAD),
+    ORIGIN_LAT+y/(EARTH*RAD)
+  ];
+}
+
+function geographicCells(data,size) {
+  const cells=new Map();
+
+  data.forEach(loc=>{
+    const p=toMetres(loc.lon,loc.lat);
+
+    const gx=Math.floor(p.x/size);
+    const gy=Math.floor(p.y/size);
+
+    const key=gx+","+gy;
+
+    if(!cells.has(key)) {
+      cells.set(key,{gx,gy,count:0});
+    }
+
+    cells.get(key).count++;
+  });
+
+  return [...cells.values()].map(cell=>{
+    const x0=cell.gx*size;
+    const y0=cell.gy*size;
+    const x1=x0+size;
+    const y1=y0+size;
+
+    const center=toDegrees(
+      (x0+x1)/2,
+      (y0+y1)/2
+    );
+
+    const polygon=[
+      toDegrees(x0,y0),
+      toDegrees(x1,y0),
+      toDegrees(x1,y1),
+      toDegrees(x0,y1),
+      toDegrees(x0,y0)
+    ];
+
+    return {
+      lon:center[0],
+      lat:center[1],
+      count:cell.count,
+      feature:{
+        type:"Feature",
+        properties:{
+          count:cell.count
+        },
+        geometry:{
+          type:"Polygon",
+          coordinates:[polygon]
+        }
+      }
+    };
+  });
+}
+
+// ========================================
+// MAP 2 — PROPORTIONAL SYMBOL MAP
+// ========================================
+
+const symbolCells=geographicCells(
+  locations,700
+);
+
+await render(9,{
+  ...mapBase(9),
+  layer:[
+    mapBoundary(),
+    {
+      data:{values:symbolCells},
+      mark:{
+        type:"circle",
+        opacity:.75,
+        color:"#b7654e",
+        stroke:"#ffffff",
+        strokeWidth:.8
+      },
+      encoding:{
+        longitude:{
+          field:"lon",
+          type:"quantitative"
+        },
+        latitude:{
+          field:"lat",
+          type:"quantitative"
+        },
+        size:{
+          field:"count",
+          type:"quantitative",
+          title:"Artworks per Cell",
+          scale:{range:[35,1200]}
+        },
+        tooltip:[
+          {
+            field:"count",
+            title:"Artworks in Cell"
+          }
+        ]
+      }
+    }
+  ]
+});
+
+// ========================================
+// MAP 3 — GEOGRAPHIC BIN MAP
+// ========================================
+
+const binCells=geographicCells(
+  locations,350
+);
+
+const binFeatures=binCells.map(
+  d=>d.feature
+);
+
+await render(10,{
+  ...mapBase(10),
+  layer:[
+    mapBoundary(),
+    {
+      data:{values:binFeatures},
+      mark:{
+        type:"geoshape",
+        opacity:.9,
+        stroke:"#ffffff",
+        strokeWidth:.6
+      },
+      encoding:{
+        color:{
+          field:"properties.count",
+          type:"quantitative",
+          title:"Artworks per Bin",
+          scale:{scheme:"orangered"}
+        },
+        tooltip:[
+          {
+            field:"properties.count",
+            type:"quantitative",
+            title:"Artworks per Bin"
+          }
+        ]
+      }
+    }
+  ]
+});
+
+} catch(error) {
+
+  console.error(error);
+
+  document.querySelectorAll(
+    ".chart"
+  ).forEach(el=>{
+    if(el.textContent.includes("Loading")) {
+      el.innerHTML=`
+        <div class="error">
+          ${error.message}
+          <p>
+            Check the CSV filenames and Live Server.
+          </p>
+        </div>
+      `;
+    }
+  });
+
+}
+}
+
+// ========================================
+// START
+// ========================================
+
+initialise();
+
+</script>
+</body>
+</html>
+
