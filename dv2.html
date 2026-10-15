@@ -624,12 +624,6 @@ const STORIES = [
     description:"Compare artwork counts within geographic grid cells.",
     chart:"Map 2 — Proportional Symbol Map",
     note:"Larger circles represent cells containing more public artworks."
-  },
-  {
-    title:"Where is public art concentrated?",
-    description:"Explore the geographic concentration of public artwork records.",
-    chart:"Map 3 — Geographic Bin Map",
-    note:"Darker square bins represent more artworks within each cell."
   }
 ];
 
@@ -1650,49 +1644,6 @@ await render(9,{
           {
             field:"count",
             title:"Artworks in Cell"
-          }
-        ]
-      }
-    }
-  ]
-});
-
-// ========================================
-// MAP 3 — GEOGRAPHIC BIN MAP
-// ========================================
-
-const binCells=geographicCells(
-  locations,350
-);
-
-const binFeatures=binCells.map(
-  d=>d.feature
-);
-
-await render(10,{
-  ...mapBase(10),
-  layer:[
-    mapBoundary(),
-    {
-      data:{values:binFeatures},
-      mark:{
-        type:"geoshape",
-        opacity:.9,
-        stroke:"#ffffff",
-        strokeWidth:.6
-      },
-      encoding:{
-        color:{
-          field:"properties.count",
-          type:"quantitative",
-          title:"Artworks per Bin",
-          scale:{scheme:"orangered"}
-        },
-        tooltip:[
-          {
-            field:"properties.count",
-            type:"quantitative",
-            title:"Artworks per Bin"
           }
         ]
       }
